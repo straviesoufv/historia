@@ -486,9 +486,11 @@
         // Preparar los headers según la documentación de OpenRouter
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
-        headers.append('Authorization', `Bearer ${apiKey}`);
+        // Probar con X-API-Key en lugar de Authorization: Bearer
+        headers.append('X-API-Key', apiKey);
         headers.append('HTTP-Referer', window.location.href);
         headers.append('X-Title', 'Ejercicios de Historia Antigua');
+        headers.append('Authorization', `Bearer ${apiKey}`); // Mantenemos ambos por si acaso
         
         // Preparar el cuerpo del mensaje
         const requestBody = {
@@ -509,9 +511,10 @@
         
         console.log('Headers de la solicitud:', {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ***' + apiKey.slice(-4),
+          'X-API-Key': '***' + apiKey.slice(-4),
           'HTTP-Referer': window.location.href,
-          'X-Title': 'Ejercicios de Historia Antigua'
+          'X-Title': 'Ejercicios de Historia Antigua',
+          'Authorization': 'Bearer ***' + apiKey.slice(-4)
         });
         
         console.log('Cuerpo de la solicitud:', JSON.stringify(requestBody, null, 2));
