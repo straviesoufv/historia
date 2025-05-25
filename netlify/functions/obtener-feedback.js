@@ -41,7 +41,7 @@ exports.handler = async (event, context) => {
     console.log('Solicitud de feedback recibida para la pregunta:', pregunta.substring(0, 50) + '...');
     
     // Usar directamente la API key de OpenRouter
-    const OPENROUTER_API_KEY = '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';
+    const OPENROUTER_API_KEY = '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';
     console.log('Usando API Key de OpenRouter directamente');
     
     // En un entorno de producción real, esto debería venir de variables de entorno
