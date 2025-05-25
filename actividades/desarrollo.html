@@ -481,11 +481,13 @@
         feedbackContenido.innerHTML = '<div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Analizando tu respuesta...</div>';
         feedbackElement.style.display = 'block';
         
+        console.log('Enviando solicitud a OpenRouter con API key:', apiKey ? '***' + apiKey.slice(-4) : 'No definida');
+        
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'Authorization': `Bearer ${apiKey}`,
             'HTTP-Referer': window.location.href,
             'X-Title': 'Ejercicios de Historia Antigua'
           },
@@ -539,8 +541,14 @@
       .then(data => document.getElementById('footer-placeholder').innerHTML = data)
       .catch(error => console.error('Error al cargar el footer:', error));
 
-    // Marcar el enlace activo en la navegación
-    window.addEventListener('DOMContentLoaded', () => {
+    // Cargar preguntas al inicio
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarPreguntas().catch(error => {
+        console.error('Error al cargar las preguntas:', error);
+        mostrarError('Error al cargar las preguntas. Por favor, recarga la página.');
+      });
+      
+      // Marcar el enlace activo en la navegación
       setTimeout(() => {
         const navLinks = document.querySelectorAll('nav a');
         navLinks.forEach(link => {
