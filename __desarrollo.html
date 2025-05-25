@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Preguntas de Desarrollo - Historia de la Antigua Roma</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="load-head.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #81c784;
+            --accent-color: #ff9800;
+            --text-color: #333;
+            --light-bg: #f5f5f5;
+            --card-bg: #ffffff;
+        }
+
+        .contenedor { 
+            max-width: 900px; 
+            margin: 2rem auto; 
+            padding: 2rem; 
+            background-color: var(--card-bg); 
+            border-radius: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos para botones */
+        #enviar {
+            background-color: var(--primary-color);
+            color: white;
+            flex: 1;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .pregunta { 
+            font-size: 1.1em; 
+            font-weight: 500;
+            margin: 1.5rem 0; 
+            line-height: 1.7;
+            color: #2c3e50;
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        textarea { 
+            width: 100%; 
+            min-height: 120px; 
+            margin: 15px 0; 
+            font-size: 1em;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+        }
+
+        textarea {
+            background: #fff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        #nuevaPregunta {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            flex: 1;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        button { 
+            padding: 12px 28px; 
+            font-size: 1em; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        button:disabled { 
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .feedback { 
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            line-height: 1.7;
+            white-space: pre-line;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.98em;
+        }
+
+        .error { 
+            color: #b71c1c; 
+            margin: 1em 0;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+            border-left: 4px solid #f44336;
+        }
+
+        .tema {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .selector-tema {
+            margin-bottom: 2rem;
+        }
+        
+        .selector-tema label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .selector-tema select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .selector-tema select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .botones {
+            display: flex;
+            justify-content: space-between;
+            margin: 2.5rem 0 1rem;
+            gap: 1.2rem;
+        }
+
+        #nuevaPregunta:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .contenedor {
+                padding: 1.5rem;
+                margin: 1rem;
+                border-radius: 8px;
+            }
+            
+            .botones {
+                flex-direction: column;
+                gap: 0.8rem;
+                margin-top: 1.5rem;
+            }
+            
+            button {
+                width: 100%;
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .pregunta {
+                padding: 1.2rem;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Biología 1º ESO - Preguntas de Desarrollo</h1>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="teoria.html">Teoría</a>
+            <a href="mapa_tematico.html">Mapa Mental</a>
+            <a href="flashcards.html">Flashcards</a>
+            <a href="crucigramas.html">Crucigramas</a>
+            <a href="ordenar_pasos.html">Ordenar Pasos</a>
+            <a href="emparejar.html">Emparejar</a>
+            <a href="memory.html">Memory</a>
+            <a href="__desarrollo.html" class="active">Preguntas a desarrollar</a>
+        </nav>
+    </header>
+    
+    <div class="contenedor">
+        <div class="selector-tema">
+            <label for="selectTema">Selecciona un tema:</label>
+            <select id="selectTema">
+                <option value="todos">Todos los temas</option>
+                <option value="MITOLOGÍA ROMANA">Mitología Romana</option>
+                <option value="CONQUISTA ROMANA">Conquista Romana de Hispania</option>
+                <option value="ORGANIZACIÓN Y ECONOMÍA">Organización y Economía</option>
+            </select>
+        </div>
+        <div id="tema" class="tema"></div>
+        <div id="pregunta" class="pregunta">Selecciona un tema de la Antigua Roma para comenzar...</div>
+        <textarea id="respuestaUsuario" placeholder="Escribe tu respuesta (1-2 párrafos) basándote en lo estudiado..."></textarea>
+        <div class="botones">
+            <button id="enviar"><i class="fas fa-paper-plane"></i> Enviar Respuesta</button>
+            <button id="nuevaPregunta"><i class="fas fa-arrow-right"></i> Siguiente Pregunta</button>
+        </div>
+        <div id="feedback" class="feedback" style="display:none"></div>
+        <div id="error" class="error" style="display:none">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-mensaje"></span>
+        </div>
+    </div>
+
+    <script>
+    // Array para almacenar las preguntas cargadas
+    let preguntas = [];
+    
+    // Función para cargar las preguntas desde el archivo markdown
+    async function cargarPreguntas() {
+        try {
+            const response = await fetch('preguntas_desarrollo_historia.md');
+            if (!response.ok) {
+                throw new Error('No se pudo cargar el archivo de preguntas');
+            }
+            const text = await response.text();
+            
+            // Procesar el archivo markdown
+            const bloques = text.split('## ').slice(1); // Saltar el título principal
+            
+            preguntas = [];
+            
+            bloques.forEach(bloque => {
+                const lineas = bloque.split('\n').filter(l => l.trim() !== '');
+                if (lineas.length === 0) return;
+                
+                const tituloBloque = lineas[0].trim();
+                let i = 1;
+                
+                // Procesar cada pregunta en el bloque
+                while (i < lineas.length) {
+                    if (lineas[i].startsWith('### ')) {
+                        const tituloPregunta = lineas[i].replace('###', '').trim();
+                        i++;
+                        
+                        // Buscar la pregunta y respuesta
+                        let pregunta = '';
+                        let respuestaModelo = '';
+                        
+                        if (i < lineas.length && lineas[i].startsWith('**Pregunta:**')) {
+                            pregunta = lineas[i].replace('**Pregunta:**', '').trim();
+                            i++;
+                            
+                            if (i < lineas.length && lineas[i].startsWith('**Respuesta modelo:**')) {
+                                respuestaModelo = lineas[i].replace('**Respuesta modelo:**', '').trim();
+                                i++;
+                                
+                                // Agregar la pregunta al array
+                                preguntas.push({
+                                    tema: tituloBloque.toUpperCase(),
+                                    pregunta: pregunta,
+                                    respuestaModelo: respuestaModelo
+                                });
+                            }
+                        }
+                    } else {
+                        i++;
+                    }
+                }
+            });
+            
+            console.log('Preguntas cargadas:', preguntas);
+            
+            if (preguntas.length === 0) {
+                throw new Error('No se encontraron preguntas en el archivo');
+            }
+            
+            // Cargar la primera pregunta aleatoria
+            cargarPreguntaAleatoria();
+            
+        } catch (error) {
+            console.error('Error al cargar las preguntas:', error);
+            mostrarError('Error al cargar las preguntas. Asegúrate de que el archivo preguntas_desarrollo_historia.md existe y tiene el formato correcto.');
+        }
+    }
+    
+    // Variables globales
+    let preguntaActual = null;
+    let respuestaModelo = '';
+    let OPENROUTER_API_KEY = ''; // Se cargará desde Netlify o archivo local
+    let preguntasFiltradas = [];
+    let temaSeleccionado = 'todos'; // Valor por defecto: todos los temas
+    
+    // Función para cargar la API key
+    async function cargarApiKey() {
+        console.log('Iniciando carga de API key...');
+        
+        // 1. Verificar si la API key está en las variables de entorno de Netlify
+        try {
+            console.log('Buscando API key en las variables de entorno...');
+            const response = await fetch('/.netlify/functions/env');
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Respuesta de la función Netlify:', data);
+                if (data.api_key) {
+                    OPENROUTER_API_KEY = data.api_key;
+                    console.log('API key cargada desde variables de entorno de Netlify');
+                    return true;
+                } else {
+                    console.warn('No se encontró API_KEY en la respuesta de la función Netlify');
+                }
+            } else {
+                console.warn('Error al llamar a la función Netlify:', response.status, response.statusText);
+            }
+        } catch (e) {
+            console.warn('Error al cargar las variables de entorno:', e);
+        }
+        
+        // 2. Si no está disponible, intentamos cargar desde el archivo local
+        try {
+            console.log('Intentando cargar desde archivo local...');
+            const response = await fetch('.env/openrouter.txt');
+            if (!response.ok) {
+                throw new Error(`No se pudo cargar el archivo de configuración: ${response.status} ${response.statusText}`);
+            }
+            const text = await response.text();
+            console.log('Contenido del archivo local:', text);
+            const match = text.match(/api_key=(.*)/);
+            
+            if (match && match[1]) {
+                OPENROUTER_API_KEY = match[1].trim();
+                console.log('API key cargada desde archivo local');
+                return true;
+            } else {
+                throw new Error('Formato de API key no válido. El archivo debe contener: api_key=TU_CLAVE_AQUI');
+            }
+        } catch (error) {
+            console.error('Error al cargar la API key:', error);
+            
+            // Mensaje de error detallado
+            const errorDetails = `Error: No se pudo cargar la API key.\n` +
+                               `- Verifica que la variable de entorno 'API_KEY' esté configurada en Netlify.\n` +
+                               `- O que exista un archivo .env/openrouter.txt con el formato: api_key=TU_CLAVE_AQUI\n\n` +
+                               `Detalles del error: ${error.message}`;
+            
+            console.error(errorDetails);
+            
+            // Mostrar mensaje al usuario
+            const preguntaElement = document.getElementById('pregunta');
+            if (preguntaElement) {
+                preguntaElement.innerHTML = `
+                    <div style="color: red; margin: 1em 0; padding: 1em; background: #ffebee; border-radius: 4px;">
+                        <strong>Error de configuración:</strong> No se pudo cargar la API key.
+                        <div style="margin-top: 1em; font-size: 0.9em; line-height: 1.5;">
+                            <p>Por favor, verifica que:</p>
+                            <ol style="margin-left: 1.5em; margin-top: 0.5em;">
+                                <li>La variable de entorno <code>API_KEY</code> esté configurada en la configuración de Netlify.</li>
+                                <li>O que exista un archivo <code>.env/openrouter.txt</code> con el formato: <code>api_key=TU_CLAVE_AQUI</code></li>
+                            </ol>
+                            <div style="margin-top: 1em; padding: 0.5em; background: #fff3e0; border-left: 4px solid #ff9800;">
+                                <strong>Nota para el administrador:</strong> ${error.message}
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            return false;
+        }
+    }
+
+    // Cargar la API key al inicio
+    cargarApiKey().then((cargada) => {
+        if (cargada) {
+            cargarPreguntas();
+        }
+    }).catch((error) => {
+        console.error('Error al cargar la API key:', error);
+    });
+
+    // Función para filtrar preguntas por tema
+    function filtrarPreguntasPorTema() {
+        temaSeleccionado = document.getElementById('selectTema').value;
+        
+        if (temaSeleccionado === 'todos') {
+            preguntasFiltradas = [...preguntas];
+        } else {
+            preguntasFiltradas = preguntas.filter(p => p.tema === temaSeleccionado);
+        }
+        
+        return preguntasFiltradas;
+    }
+    
+    // Función para cargar una pregunta aleatoria
+    function cargarPreguntaAleatoria() {
+        const preguntasDisponibles = temaSeleccionado === 'todos' ? preguntas : preguntasFiltradas;
+        
+        if (preguntasDisponibles.length === 0) {
+            document.getElementById('pregunta').textContent = 'No hay preguntas disponibles para el tema seleccionado.';
+            document.getElementById('tema').textContent = '';
+            document.getElementById('respuestaUsuario').value = '';
+            document.getElementById('feedback').style.display = 'none';
+            return;
+        }
+        
+        const indice = Math.floor(Math.random() * preguntasDisponibles.length);
+        preguntaActual = preguntasDisponibles[indice];
+        respuestaModelo = preguntaActual.respuesta;
+        
+        document.getElementById('tema').textContent = preguntaActual.tema;
+        document.getElementById('pregunta').textContent = preguntaActual.pregunta;
+        document.getElementById('respuestaUsuario').value = '';
+        document.getElementById('feedback').style.display = 'none';
+        
+        // Desplazar la vista a la pregunta
+        document.getElementById('pregunta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Función para obtener feedback de OpenRouter
+    async function obtenerFeedback(respuestaUsuario) {
+        if (!preguntaActual) return;
+        
+        // Verificar que la API key esté configurada
+        if (!OPENROUTER_API_KEY) {
+            mostrarError('Error: No se ha podido cargar la API key. Verifica que el archivo .env/openrouter.txt existe y contiene tu API key de OpenRouter.');
+            return 'Error: No se ha podido cargar la API key.';
+        }
+
+        try {
+            // Mostrar mensaje de carga
+            const feedbackElement = document.getElementById('feedback');
+            feedbackElement.innerHTML = '<div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Analizando tu respuesta...</div>';
+            feedbackElement.style.display = 'block';
+            
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'Ejercicios de Historia Antigua'
+                },
+                body: JSON.stringify({
+                    model: 'mistralai/mistral-7b-instruct',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'Eres un profesor de historia experto en la Antigua Roma. Evalúa la respuesta del estudiante comparándola con la respuesta modelo. Proporciona un feedback constructivo, señalando aciertos, errores importantes y sugerencias de mejora. Sé claro y conciso (máximo 150 palabras). Si la respuesta es muy corta o irrelevante, sugiere cómo mejorarla.'
+                        },
+                        {
+                            role: 'user',
+                            content: `Tema: ${preguntaActual.tema}\n\nPregunta: ${preguntaActual.pregunta}\n\nRespuesta modelo de referencia: ${preguntaActual.respuestaModelo}\n\nRespuesta del estudiante: ${respuestaUsuario}`
+                        }
+                    ],
+                    max_tokens: 400,
+                    temperature: 0.7
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error de red: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+            
+        } catch (error) {
+            console.error('Error al obtener feedback:', error);
+            return `Error al obtener el feedback: ${error.message}. Por favor, inténtalo de nuevo.`;
+        }
+    }
+
+    // Evento al cambiar el tema seleccionado
+    document.getElementById('selectTema').addEventListener('change', () => {
+        filtrarPreguntasPorTema();
+        cargarPreguntaAleatoria();
+    });
+    
+    // Evento al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        // Cargar las preguntas desde el archivo
+        cargarPreguntas();
+        
+        // Evento para el botón de enviar
+        document.getElementById('enviar').addEventListener('click', async () => {
+            // Verificar que la API key esté configurada
+            if (!OPENROUTER_API_KEY) {
+                mostrarError('Error: No se ha podido cargar la API key. Verifica que el archivo .env/openrouter.txt existe y contiene tu API key de OpenRouter.');
+                return;
+            }
+            const respuestaUsuario = document.getElementById('respuestaUsuario').value.trim();
+            if (!respuestaUsuario) {
+                mostrarError('Por favor, escribe tu respuesta antes de enviar.');
+                return;
+            }
+            
+            // Deshabilitar botones y mostrar carga
+            document.getElementById('enviar').disabled = true;
+            document.getElementById('nuevaPregunta').disabled = true;
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').textContent = 'Analizando tu respuesta...';
+            document.getElementById('feedback').style.display = 'block';
+            
+            try {
+                // Obtener feedback de OpenRouter
+                const feedback = await obtenerFeedback(respuestaUsuario);
+                
+                // Mostrar feedback
+                document.getElementById('feedback').textContent = feedback;
+                document.getElementById('feedback').style.display = 'block';
+                
+            } catch (error) {
+                mostrarError('Error al procesar tu respuesta. Por favor, inténtalo de nuevo.');
+                console.error('Error:', error);
+            } finally {
+                // Rehabilitar botones
+                document.getElementById('enviar').disabled = false;
+                document.getElementById('nuevaPregunta').disabled = false;
+            }
+        });
+        
+        // Evento para el botón de nueva pregunta
+        document.getElementById('nuevaPregunta').addEventListener('click', () => {
+            if (preguntasFiltradas.length === 0) {
+                mostrarError('No hay más preguntas disponibles para este tema.');
+                return;
+            }
+            cargarPreguntaAleatoria();
+        });
+
+        // Permitir Ctrl+Enter para enviar la respuesta
+        document.getElementById('respuestaUsuario').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('enviar').click();
+            }
+        });
+        
+
+    });
+
+    // Función para mostrar mensajes de error
+    function mostrarError(mensaje) {
+        const errorDiv = document.getElementById('error');
+        errorDiv.textContent = mensaje;
+        errorDiv.style.display = 'block';
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+    
+
+    </script>
+</body>
+</html>

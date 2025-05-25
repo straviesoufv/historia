@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <!-- EDITAR: Cambia el título de la web según tu asignatura -->
+  <title>Nombre de asignatura – Material educativo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Material educativo para la asignatura" />
+  <link rel="stylesheet" href="estilos.css" />
+  <!-- OPCIONAL: Puedes añadir aquí un favicon personalizado -->
+  <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+</head>
+<body>
+  <!-- Encabezado común (se carga automáticamente desde header.html) -->
+  <div id="header-placeholder"></div>
+  
+  <main>
+    <!-- IMPORTANTE: Aquí se inyecta el contenido específico de cada página -->
+    <!-- Este espacio será reemplazado por el contenido de cada archivo HTML -->
+    <!-- NO modifiques esta sección en este archivo -->
+  </main>
+  
+  <!-- Footer común (se carga automáticamente desde footer.html) -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Script para insertar el header y footer en todas las páginas -->
+  <!-- NO modifiques este script a menos que sepas lo que estás haciendo -->
+  <script>
+    // Carga header y footer de archivos externos
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Función para marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+          }
+        });
+      }, 100); // Pequeño retraso para asegurar que el header se ha cargado
+    });
+  </script>
+</body>
+</html>

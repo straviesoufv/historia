@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crucigrama: Historia Romana - 1º ESO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Crucigrama interactivo sobre Historia Romana para 1º de ESO" />
+  <link rel="stylesheet" href="../estilos.css" />
+  <style>
+    /* Estilos específicos para la página del crucigrama */
+    .crucigrama-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    
+    .instrucciones {
+      background-color: #f0f8ff;
+      border-left: 4px solid #4a90e2;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 0 8px 8px 0;
+      text-align: left;
+    }
+    
+    .instrucciones h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    
+    .instrucciones ol {
+      padding-left: 1.5rem;
+    }
+    
+    .instrucciones li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .iframe-container {
+      position: relative;
+      overflow: hidden;
+      padding-top: 56.25%; /* Relación de aspecto 16:9 */
+      margin: 2rem 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .volver {
+      display: inline-block;
+      margin: 1.5rem 0;
+      padding: 0.8rem 1.5rem;
+      background-color: #4a90e2;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    
+    .volver:hover {
+      background-color: #357abd;
+    }
+    
+    @media (max-width: 768px) {
+      .crucigrama-container {
+        padding: 0 1rem;
+      }
+      
+      .instrucciones {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <main class="crucigrama-container">
+    <h1>Crucigrama: Historia Romana</h1>
+    
+    <div class="instrucciones">
+      <h2>Instrucciones:</h2>
+      <ol>
+        <li>Haz clic en cualquier casilla para comenzar a completar el crucigrama.</li>
+        <li>Usa el teclado para escribir las respuestas.</li>
+        <li>Puedes cambiar entre horizontal y vertical con las teclas de dirección.</li>
+        <li>Pulsa el botón "Comprobar" para verificar tus respuestas.</li>
+        <li>Si necesitas ayuda, usa el botón "Pista" para obtener una letra.</li>
+      </ol>
+    </div>
+    
+    <div class="iframe-container">
+      <iframe 
+        allow="fullscreen; autoplay;" 
+        allowfullscreen 
+        frameborder="0" 
+        src="https://es.educaplay.com/juego/23991773-historia_romana_1_eso.html">
+      </iframe>
+    </div>
+    
+    <div class="consejos">
+      <h3>Consejos para resolver el crucigrama:</h3>
+      <ul>
+        <li>Empieza por las palabras más cortas o las que reconozcas fácilmente.</li>
+        <li>Fíjate en las letras que se cruzan para ayudarte con las palabras más difíciles.</li>
+        <li>Si te atascas, revisa tus apuntes antes de pedir pistas.</li>
+      </ul>
+    </div>
+    
+    <a href="../actividades.html" class="volver">Volver a actividades</a>
+  </main>
+  
+  <div id="footer-placeholder"></div>
+  
+  <script>
+    // Cargar header y footer
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('../footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === 'actividades.html') {
+            link.classList.add('active');
+          }
+        });
+      }, 100);
+    });
+  </script>
+</body>
+</html>

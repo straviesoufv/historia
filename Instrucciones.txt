@@ -1,0 +1,5 @@
+1. Copiar la plantilla a la ruta
+2. Usar https://markdowntohtml.com/ para convertir la teoría en HTML, y cambiar el contenido de teoria.html (desde <h1> hasta antes del </main>)
+3. Hacer lo mismo con el resumen
+4. Ir a https://es.educaplay.com/ para generar el crucigrama y copiar el iframe para incrustar en crucigrama.html
+5. Pedir a la IA que genere memory, flashcards, completar texto... con la teoría completa

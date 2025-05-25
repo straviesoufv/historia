@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Completar Texto - Actividad Interactiva</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .bloque-selector {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .bloque-selector select {
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .texto-container {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #3498db;
+    }
+
+    .texto {
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .hueco {
+      display: inline-block;
+      min-width: 100px;
+      border-bottom: 2px solid #3498db;
+      margin: 0 5px;
+      padding: 0 5px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hueco input {
+      border: none;
+      background: transparent;
+      border-bottom: 1px solid #3498db;
+      outline: none;
+      width: 100%;
+      text-align: center;
+      padding: 5px 0;
+      font-size: 16px;
+    }
+
+    .hueco.correcto {
+      background-color: #d4edda;
+      border-color: #28a745;
+    }
+
+    .hueco.incorrecto {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .boton {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .boton.verificar {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .boton.reiniciar {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .boton.volver {
+      background-color: #17a2b8;
+      color: white;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .boton:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .resultado {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+
+    .resultado.correcto {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .resultado.incorrecto {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .puntuacion {
+      text-align: center;
+      font-size: 18px;
+      margin: 20px 0;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    @media (max-width: 768px) {
+      .botones {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .boton {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <div class="container">
+    <h1><i class="fas fa-edit"></i> Completar el Texto</h1>
+    
+    <div class="bloque-selector">
+      <select id="selector-bloque">
+        <option value="">Selecciona un bloque temático</option>
+        <option value="bloque1">Bloque 1: Mitología romana</option>
+        <option value="bloque2">Bloque 2: Conquista romana de Hispania</option>
+        <option value="bloque3">Bloque 3: Organización romana de Hispania y economía</option>
+      </select>
+    </div>
+    
+    <div id="contenedor-textos">
+      <!-- Los textos se cargarán aquí dinámicamente -->
+    </div>
+    
+    <div class="botones">
+      <button id="btn-verificar" class="boton verificar">
+        <i class="fas fa-check"></i> Verificar respuestas
+      </button>
+      <button id="btn-reiniciar" class="boton reiniciar">
+        <i class="fas fa-redo"></i> Reiniciar
+      </button>
+      <a href="../actividades.html" class="boton volver">
+        <i class="fas fa-arrow-left"></i> Volver a actividades
+      </a>
+    </div>
+    
+    <div id="resultado" class="resultado"></div>
+    <div id="puntuacion" class="puntuacion"></div>
+  </div>
+  <div id="footer-placeholder"></div>
+
+
+  
+  <script>
+    // Datos de los textos a completar organizados por bloques
+    const textosPorBloque = {
+      bloque1: [
+        {
+          titulo: "El mito de Saturno",
+          texto: "Saturno, conocido como [1] para los griegos, era hijo de [2] y [3]. Temiendo que sus hijos lo destronaran, los [4] al nacer. Su esposa [5] logró salvar a Júpiter dándole una [6] envuelta en pañales. Cuando Júpiter creció, obligó a su padre a [7] a sus hermanos y lo destronó.",
+          respuestas: ["Cronos", "Gea", "Urano", "tragaba", "Rea", "piedra", "vomitar"],
+          pistas: ["Nombre griego de Saturno", "Madre de Saturno", "Padre de Saturno", "Acción que realizaba con sus hijos", "Esposa de Saturno", "Objeto que le dio a Saturno", "Acción que Júpiter obligó a hacer"]
+        },
+        {
+          titulo: "El mito de Proserpina",
+          texto: "[1], dios de los infiernos, raptó a [2], hija de [3]. Su madre, al no encontrarla, dejó de cuidar la [4]. Júpiter decidió que Proserpina viviría [5] meses con Plutón y [6] meses en la Tierra, dando origen a las [7].",
+          respuestas: ["Plutón", "Proserpina", "Ceres", "Tierra", "seis", "seis", "estaciones"],
+          pistas: ["Dios del inframundo romano", "Hija de Ceres", "Diosa de la Tierra", "Lo que dejó de cuidar Ceres", "Número de meses con Plutón", "Número de meses en la Tierra", "Fenómeno natural que explica el mito"]
+        }
+      ],
+      bloque2: [
+        {
+          titulo: "La conquista romana de la península",
+          texto: "Los cartagineses desembarcaron en [1] en el año [2] a.C. y fundaron [3] como base. Los romanos, comandados por los hermanos [4], desembarcaron en [5] en el [6] a.C. La conquista fue difícil por la resistencia de pueblos como los [7] y [8].",
+          respuestas: ["Gadir", "230", "Qart Hadasht", "Escipión", "Empúries", "218", "lusitanos", "celtíberos"],
+          pistas: ["Ciudad actual: Cádiz", "Año de desembarco cartaginés", "Nombre púnico de Cartagena", "Familia de generales romanos", "Ciudad donde desembarcaron los romanos", "Año de desembarco romano", "Pueblo indígena rebelde", "Otro pueblo indígena rebelde"]
+        },
+        {
+          titulo: "La romanización",
+          texto: "La romanización fue el proceso de adaptación a la civilización [1]. Los indígenas adoptaron la [2], [3] y [4] romanas. El [5] se generalizó, mientras que las lenguas indígenas desaparecieron, excepto el [6]. Los indígenas romanizados se llamaban [7].",
+          respuestas: ["romana", "cultura", "lengua", "religión", "latín", "euskera", "hispanorromanos"],
+          pistas: ["Civilización dominante", "Aspecto cultural adoptado", "Idioma impuesto", "Sistema de creencias", "Lengua de los romanos", "Lengua que sobrevivió", "Nombre de los indígenas romanizados"]
+        }
+      ],
+      bloque3: [
+        {
+          titulo: "Organización de Hispania",
+          texto: "Los romanos dividieron Hispania en [1] gobernadas por un [2]. Las ciudades fundadas por Roma, como [3] y [4], no pagaban impuestos. Otras, como [5] y [6], sí los pagaban según su grado de romanización. Las ciudades estaban conectadas por [7] como la Vía Augusta.",
+          respuestas: ["provincias", "gobernador", "Itálica", "Barcino", "Saguntum", "Gades", "vías"],
+          pistas: ["Divisiones territoriales", "Máximo cargo provincial", "Colonia en Santiponce, Sevilla", "Colonia que hoy es Barcelona", "Ciudad en la actual Comunidad Valenciana", "Ciudad en la actual Andalucía", "Caminos romanos"]
+        },
+        {
+          titulo: "Economía de Hispania",
+          texto: "La agricultura hispana se basaba en el cultivo de [1], [2] y [3]. En la costa se producían [4] de pescado. Las minas extraían [5], [6] y otros metales. Los productos se transportaban por [7] como la Vía de la Plata.",
+          respuestas: ["trigo", "vid", "olivo", "salazones", "oro", "plata", "calzadas"],
+          pistas: ["Cereal básico", "Planta para hacer vino", "Árbol del que se obtiene aceite", "Conservas de pescado", "Metal precioso amarillo", "Metal precioso blanco", "Caminos romanos"]
+        },
+        {
+          titulo: "Términos latinos",
+          texto: "[1]: Lo que queda. [2]: Lo que falta. [3]: Y las demás cosas. [4]: Por iniciativa propia. [5]: En el momento. [6]: Conjunto de méritos. [7]: Cosas por hacer.",
+          respuestas: ["Superávit", "Déficit", "Etcétera", "Motu proprio", "Ipso facto", "Curriculum vitae", "Agenda"],
+          pistas: ["Lo que sobra", "Lo que falta", "Etc.", "Por propia voluntad", "De inmediato", "Hoja de vida", "Lista de tareas"]
+        }
+      ]
+    };
+
+    // Variables globales
+    let textosActuales = [];
+    let respuestasUsuario = [];
+    let textoActualIndex = 0;
+
+    // Elementos del DOM
+    const selectorBloque = document.getElementById('selector-bloque');
+    const contenedorTextos = document.getElementById('contenedor-textos');
+    const btnVerificar = document.getElementById('btn-verificar');
+    const btnReiniciar = document.getElementById('btn-reiniciar');
+    const resultadoDiv = document.getElementById('resultado');
+    const puntuacionDiv = document.getElementById('puntuacion');
+
+    // Event Listeners
+    selectorBloque.addEventListener('change', cargarTextosDelBloque);
+    btnVerificar.addEventListener('click', verificarRespuestas);
+    btnReiniciar.addEventListener('click', reiniciarActividad);
+
+    // Cargar textos del bloque seleccionado
+    function cargarTextosDelBloque() {
+      const bloqueSeleccionado = selectorBloque.value;
+      
+      if (!bloqueSeleccionado) {
+        contenedorTextos.innerHTML = '';
+        return;
+      }
+      
+      // Obtener textos del bloque seleccionado
+      textosActuales = [...textosPorBloque[bloqueSeleccionado]];
+      textoActualIndex = 0;
+      
+      // Mezclar los textos para mostrarlos en orden aleatorio
+      mezclarArray(textosActuales);
+      
+      // Mostrar el primer texto
+      mostrarSiguienteTexto();
+    }
+
+    // Mostrar el siguiente texto
+    function mostrarSiguienteTexto() {
+      if (textoActualIndex >= textosActuales.length) {
+        // Mostrar mensaje de finalización
+        contenedorTextos.innerHTML = `
+          <div class="texto-container">
+            <h3>¡Actividad completada!</h3>
+            <p>Has terminado todos los textos de este bloque. Puedes seleccionar otro bloque o reiniciar la actividad.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const textoActual = textosActuales[textoActualIndex];
+      let textoConHuecos = textoActual.texto;
+      
+      // Reemplazar los números entre corchetes con campos de entrada
+      for (let i = 0; i < textoActual.respuestas.length; i++) {
+        const regex = new RegExp(`\\[${i + 1}\\]`, 'g');
+        textoConHuecos = textoConHuecos.replace(
+          regex, 
+          `<span class="hueco" data-respuesta="${textoActual.respuestas[i].toLowerCase()}" data-pista="${textoActual.pistas[i]}">
+             <input type="text" class="input-hueco" data-index="${i}" placeholder="${textoActual.pistas[i]}">
+           </span>`
+        );
+      }
+      
+      // Mostrar el texto con los huecos
+      contenedorTextos.innerHTML = `
+        <div class="texto-container">
+          <h3>${textoActual.titulo}</h3>
+          <p class="texto">${textoConHuecos}</p>
+        </div>
+      `;
+      
+      // Inicializar el array de respuestas del usuario
+      respuestasUsuario = new Array(textoActual.respuestas.length).fill('');
+      
+      // Agregar event listeners a los inputs
+      document.querySelectorAll('.input-hueco').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          respuestasUsuario[index] = e.target.value.trim().toLowerCase();
+        });
+      });
+      
+      // Actualizar la puntuación
+      actualizarPuntuacion();
+    }
+
+    // Verificar las respuestas
+    function verificarRespuestas() {
+      const huecos = document.querySelectorAll('.hueco');
+      const respuestasCorrectas = textosActuales[textoActualIndex].respuestas;
+      let aciertos = 0;
+      
+      huecos.forEach((hueco, index) => {
+        const input = hueco.querySelector('input');
+        const respuestaCorrecta = respuestasCorrectas[index].toLowerCase();
+        const respuestaUsuario = input.value.trim().toLowerCase();
+        
+        if (respuestaUsuario === respuestaCorrecta) {
+          hueco.classList.add('correcto');
+          hueco.classList.remove('incorrecto');
+          aciertos++;
+        } else {
+          hueco.classList.add('incorrecto');
+          hueco.classList.remove('correcto');
+          // Mostrar la respuesta correcta al pasar el ratón
+          hueco.title = `Respuesta correcta: ${respuestaCorrecta}`;
+        }
+      });
+      
+      // Mostrar resultado
+      const porcentaje = Math.round((aciertos / respuestasCorrectas.length) * 100);
+      resultadoDiv.textContent = `Has acertado ${aciertos} de ${respuestasCorrectas.length} (${porcentaje}%)`;
+      resultadoDiv.className = porcentaje >= 50 ? 'resultado correcto' : 'resultado incorrecto';
+      resultadoDiv.style.display = 'block';
+      
+      // Deshabilitar los inputs
+      document.querySelectorAll('.input-hueco').forEach(input => {
+        input.disabled = true;
+      });
+      
+      // Habilitar el botón de siguiente
+      const btnSiguiente = document.createElement('button');
+      btnSiguiente.className = 'boton verificar';
+      btnSiguiente.innerHTML = '<i class="fas fa-arrow-right"></i> Siguiente texto';
+      btnSiguiente.onclick = () => {
+        textoActualIndex++;
+        mostrarSiguienteTexto();
+      };
+      
+      // Reemplazar el botón de verificar por el de siguiente
+      btnVerificar.replaceWith(btnSiguiente);
+      btnVerificar.remove();
+    }
+
+    // Reiniciar la actividad
+    function reiniciarActividad() {
+      if (selectorBloque.value) {
+        cargarTextosDelBloque();
+        resultadoDiv.style.display = 'none';
+      } else {
+        contenedorTextos.innerHTML = '';
+        resultadoDiv.style.display = 'none';
+      }
+    }
+
+    // Actualizar la puntuación
+    function actualizarPuntuacion() {
+      const totalTextos = textosActuales.length;
+      puntuacionDiv.textContent = `Texto ${textoActualIndex + 1} de ${totalTextos}`;
+    }
+
+    // Función para mezclar un array (algoritmo de Fisher-Yates)
+    function mezclarArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+  </script>
+    <script>
+      // Cargar header y footer
+      fetch('../header.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('header-placeholder').innerHTML = data)
+        .catch(error => console.error('Error al cargar el header:', error));
+        
+      fetch('../footer.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+        .catch(error => console.error('Error al cargar el footer:', error));
+  
+      // Marcar el enlace activo en la navegación
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const navLinks = document.querySelectorAll('nav a');
+          navLinks.forEach(link => {
+            if (link.getAttribute('href') === 'actividades.html') {
+              link.classList.add('active');
+            }
+          });
+        }, 100);
+      });
+    </script>
+</body>
+</html>

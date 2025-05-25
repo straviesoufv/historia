@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas de Desarrollo - Historia de la Antigua Roma</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../estilos.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .tema-selector {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .tema-selector select {
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 2px solid #e0e0e0;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.3s ease;
+    }
+
+    .tema-selector select:focus {
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    }
+
+    .pregunta-container {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #2e7d32;
+    }
+
+    .pregunta {
+      font-size: 1.1em;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1em;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    }
+
+    .botones {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #enviar {
+      background-color: #2e7d32;
+      color: white;
+    }
+
+    #enviar:hover {
+      background-color: #1b5e20;
+      transform: translateY(-2px);
+    }
+
+    #nuevaPregunta {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #e0e0e0;
+    }
+
+    #nuevaPregunta:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-2px);
+    }
+
+    .feedback {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #e8f5e9;
+      border-left: 4px solid #2e7d32;
+      display: none;
+    }
+
+    .feedback h3 {
+      margin-top: 0;
+      color: #2e7d32;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error {
+      color: #b71c1c;
+      background-color: #ffebee;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #f44336;
+      margin: 15px 0;
+      display: none;
+    }
+
+    .error i {
+      margin-right: 10px;
+    }
+
+    .tema-actual {
+      display: inline-block;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .botones {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <div class="container">
+    <h1><i class="fas fa-pen-fancy"></i> Preguntas de Desarrollo</h1>
+    
+    <div class="tema-selector">
+      <select id="selectTema">
+        <option value="todos">Todos los temas</option>
+        <option value="MITOLOGÍA ROMANA">Mitología Romana</option>
+        <option value="CONQUISTA ROMANA">Conquista Romana de Hispania</option>
+        <option value="ORGANIZACIÓN Y ECONOMÍA">Organización y Economía</option>
+      </select>
+    </div>
+    
+    <div id="tema" class="tema-actual"></div>
+    
+    <div class="pregunta-container">
+      <div id="pregunta" class="pregunta">
+        Selecciona un tema de la Antigua Roma para comenzar...
+      </div>
+      
+      <textarea 
+        id="respuestaUsuario" 
+        placeholder="Escribe tu respuesta (1-2 párrafos) basándote en lo estudiado..."
+        disabled
+      ></textarea>
+      
+      <div class="botones">
+        <button id="enviar" disabled>
+          <i class="fas fa-paper-plane"></i> Enviar Respuesta
+        </button>
+        <button id="nuevaPregunta" disabled>
+          <i class="fas fa-arrow-right"></i> Siguiente Pregunta
+        </button>
+      </div>
+      
+      <div id="feedback" class="feedback">
+        <h3><i class="fas fa-comment-dots"></i> Retroalimentación</h3>
+        <div id="feedback-contenido"></div>
+      </div>
+      
+      <div id="error" class="error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="error-mensaje"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Array para almacenar las preguntas cargadas
+    let preguntas = [];
+    let preguntaActual = null;
+    let preguntasFiltradas = [];
+    let OPENROUTER_API_KEY = '';
+    
+    // Elementos del DOM
+    const selectTema = document.getElementById('selectTema');
+    const elementoPregunta = document.getElementById('pregunta');
+    const textareaRespuesta = document.getElementById('respuestaUsuario');
+    const btnEnviar = document.getElementById('enviar');
+    const btnNuevaPregunta = document.getElementById('nuevaPregunta');
+    const feedbackElement = document.getElementById('feedback');
+    const feedbackContenido = document.getElementById('feedback-contenido');
+    const errorElement = document.getElementById('error');
+    const errorMensaje = document.getElementById('error-mensaje');
+    const temaActualElement = document.getElementById('tema');
+    
+    // Cargar las preguntas al iniciar la página
+    document.addEventListener('DOMContentLoaded', cargarPreguntas);
+    
+    // Event listeners
+    selectTema.addEventListener('change', cargarPreguntaAleatoria);
+    btnEnviar.addEventListener('click', enviarRespuesta);
+    btnNuevaPregunta.addEventListener('click', cargarPreguntaAleatoria);
+    
+    // Función para cargar las preguntas desde el archivo markdown
+    async function cargarPreguntas() {
+      try {
+        const ruta = '../preguntas_desarrollo_historia.md';
+        console.log('Intentando cargar archivo desde:', ruta);
+        
+        const response = await fetch(ruta, {cache: 'no-cache'});
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+        }
+        const text = await response.text();
+        console.log('Contenido del archivo (primeros 200 caracteres):', text.substring(0, 200));
+        
+        // Procesar el archivo markdown
+        const bloques = text.split('## ').slice(1); // Saltar el título principal
+        console.log('Número de bloques encontrados:', bloques.length);
+        
+        bloques.forEach((bloque, index) => {
+          console.log(`\nProcesando bloque ${index + 1}:`);
+          
+          // Dividir el bloque en líneas y filtrar vacías
+          const lineas = bloque.split('\n').filter(l => l.trim() !== '');
+          if (lineas.length === 0) return;
+          
+          // El título del bloque es la primera línea (sin el ## inicial)
+          const tituloBloque = lineas[0].trim().replace(/^[^:]+:?\s*/, '');
+          console.log(`  - Título del bloque: ${tituloBloque}`);
+          console.log(`  - Número de líneas en el bloque: ${lineas.length}`);
+          
+          // Variables para acumular la pregunta actual
+          let preguntaActual = null;
+          let respuestaActual = [];
+          let enRespuesta = false;
+          
+          // Procesar cada línea del bloque
+          for (let i = 1; i < lineas.length; i++) {
+            const linea = lineas[i].trim();
+            
+            // Si encontramos una nueva pregunta
+            if (linea.startsWith('### ')) {
+              // Si teníamos una pregunta pendiente, la guardamos
+              if (preguntaActual && respuestaActual.length > 0) {
+                preguntas.push({
+                  tema: tituloBloque.toUpperCase(),
+                  pregunta: preguntaActual,
+                  respuestaModelo: respuestaActual.join('\n').trim()
+                });
+              }
+              // Iniciamos una nueva pregunta
+              preguntaActual = null;
+              respuestaActual = [];
+              enRespuesta = false;
+              continue;
+            }
+            
+            // Buscar la pregunta
+            if (!preguntaActual && linea.startsWith('**Pregunta:**')) {
+              preguntaActual = linea.replace('**Pregunta:**', '').trim();
+              console.log('    - Pregunta encontrada:', preguntaActual.substring(0, 50) + '...');
+              continue;
+            }
+            
+            // Buscar la respuesta
+            if (linea.startsWith('**Respuesta modelo:**')) {
+              const respuestaInicio = linea.replace('**Respuesta modelo:**', '').trim();
+              if (respuestaInicio) respuestaActual.push(respuestaInicio);
+              enRespuesta = true;
+            } else if (enRespuesta) {
+              // Si estamos en una respuesta, seguimos acumulando líneas
+              if (linea) respuestaActual.push(linea);
+            }
+          }
+          
+          // Asegurarse de guardar la última pregunta del bloque
+          if (preguntaActual && respuestaActual.length > 0) {
+            preguntas.push({
+              tema: tituloBloque.toUpperCase(),
+              pregunta: preguntaActual,
+              respuestaModelo: respuestaActual.join('\n').trim()
+            });
+          }
+        });
+        
+        console.log('Preguntas cargadas:', preguntas);
+        
+        if (preguntas.length === 0) {
+          throw new Error('No se encontraron preguntas en el archivo. Verifica el formato del archivo.');
+        }
+        
+        // Cargar la primera pregunta aleatoria
+        cargarPreguntaAleatoria();
+        
+      } catch (error) {
+        console.error('Error al cargar las preguntas:', error);
+        mostrarError('Error al cargar las preguntas: ' + error.message);
+      }
+    }
+    
+    // Filtrar preguntas por tema seleccionado
+    function filtrarPreguntasPorTema() {
+      const temaSeleccionado = selectTema.value;
+      
+      if (temaSeleccionado === 'todos') {
+        preguntasFiltradas = [...preguntas];
+      } else {
+        // Usamos includes() para hacer coincidencias parciales de temas
+        // Primero mostramos todas las preguntas y sus temas para depuración
+        console.log('Temas disponibles:');
+        const temasUnicos = [...new Set(preguntas.map(p => p.tema))];
+        console.log(temasUnicos);
+        
+        // Filtramos las preguntas
+        preguntasFiltradas = preguntas.filter(p => {
+          const temaPregunta = p.tema.toLowerCase();
+          const temaBuscado = temaSeleccionado.toLowerCase();
+          console.log(`Comparando: "${temaPregunta}" con "${temaBuscado}"`);
+          return temaPregunta.includes(temaBuscado) || 
+                 temaBuscado.includes(temaPregunta);
+        });
+      }
+      
+      console.log('Preguntas filtradas encontradas:', preguntasFiltradas.length);
+      
+      if (preguntasFiltradas.length === 0) {
+        mostrarError(`No hay preguntas disponibles para el tema seleccionado (${temaSeleccionado}). Prueba con "Todos los temas".`);
+        return;
+      }
+      
+      // Habilitar/deshabilitar controles según haya preguntas
+      const hayPreguntas = preguntasFiltradas.length > 0;
+      textareaRespuesta.disabled = !hayPreguntas;
+      btnEnviar.disabled = !hayPreguntas;
+      btnNuevaPregunta.disabled = !hayPreguntas;
+      
+      return hayPreguntas;
+    }
+    
+    // Cargar una pregunta aleatoria
+    function cargarPreguntaAleatoria() {
+      // Ocultar feedback anterior
+      feedbackElement.style.display = 'none';
+      errorElement.style.display = 'none';
+      
+      // Filtrar preguntas por tema
+      const hayPreguntas = filtrarPreguntasPorTema();
+      
+      if (!hayPreguntas) {
+        elementoPregunta.textContent = 'No hay preguntas disponibles para el tema seleccionado.';
+        textareaRespuesta.value = '';
+        textareaRespuesta.disabled = true;
+        btnEnviar.disabled = true;
+        btnNuevaPregunta.disabled = true;
+        return;
+      }
+      
+      // Seleccionar una pregunta aleatoria
+      const indice = Math.floor(Math.random() * preguntasFiltradas.length);
+      preguntaActual = preguntasFiltradas[indice];
+      
+      // Mostrar la pregunta
+      elementoPregunta.textContent = preguntaActual.pregunta;
+      temaActualElement.textContent = preguntaActual.tema;
+      textareaRespuesta.value = '';
+      textareaRespuesta.disabled = false;
+      btnEnviar.disabled = false;
+    }
+    
+    // Enviar respuesta para obtener feedback
+    async function enviarRespuesta() {
+      const respuesta = textareaRespuesta.value.trim();
+      
+      if (!respuesta) {
+        mostrarError('Por favor, escribe tu respuesta antes de enviar.');
+        return;
+      }
+      
+      try {
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        
+        const feedback = await obtenerFeedback(respuesta);
+        
+        // Mostrar feedback
+        feedbackContenido.innerHTML = feedback;
+        feedbackElement.style.display = 'block';
+        
+        // Desplazar a la sección de feedback
+        feedbackElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+      } catch (error) {
+        console.error('Error al enviar la respuesta:', error);
+        mostrarError('Error al procesar tu respuesta. Por favor, inténtalo de nuevo.');
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Respuesta';
+      }
+    }
+    
+    // Obtener feedback de OpenRouter
+    async function obtenerFeedback(respuestaUsuario) {
+      if (!preguntaActual) return;
+      
+      // Verificar que la API key esté configurada
+      if (!OPENROUTER_API_KEY) {
+        // Intentar cargar la API key desde variables de entorno o archivo local
+        try {
+          const response = await fetch('../.env/openrouter.txt');
+          if (response.ok) {
+            OPENROUTER_API_KEY = await response.text();
+          } else {
+            throw new Error('No se pudo cargar la API key');
+          }
+        } catch (error) {
+          console.error('Error al cargar la API key:', error);
+          throw new Error('No se pudo cargar la API key de OpenRouter. Verifica que el archivo .env/openrouter.txt existe y contiene tu API key.');
+        }
+      }
+
+      try {
+        // Mostrar mensaje de carga
+        feedbackContenido.innerHTML = '<div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Analizando tu respuesta...</div>';
+        feedbackElement.style.display = 'block';
+        
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'Ejercicios de Historia Antigua'
+          },
+          body: JSON.stringify({
+            model: 'mistralai/mistral-7b-instruct',
+            messages: [
+              {
+                role: 'system',
+                content: 'Eres un profesor de historia experto en la Antigua Roma. Evalúa la respuesta del estudiante comparándola con la respuesta modelo. Proporciona un feedback constructivo, señalando aciertos, errores importantes y sugerencias de mejora. Sé claro y conciso (máximo 150 palabras). Si la respuesta es muy corta o irrelevante, sugiere cómo mejorarla.'
+              },
+              {
+                role: 'user',
+                content: `Tema: ${preguntaActual.tema}\n\nPregunta: ${preguntaActual.pregunta}\n\nRespuesta modelo de referencia: ${preguntaActual.respuestaModelo}\n\nRespuesta del estudiante: ${respuestaUsuario}`
+              }
+            ],
+            max_tokens: 400,
+            temperature: 0.7
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Error de red: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
+        
+      } catch (error) {
+        console.error('Error al obtener feedback:', error);
+        throw new Error(`No se pudo obtener el feedback: ${error.message}. Por favor, inténtalo de nuevo.`);
+      }
+    }
+    
+    // Mostrar mensaje de error
+    function mostrarError(mensaje) {
+      errorMensaje.textContent = mensaje;
+      errorElement.style.display = 'flex';
+      errorElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+    <div id="footer-placeholder"></div>
+  <script>
+    // Cargar header y footer
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('../footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === 'actividades.html') {
+            link.classList.add('active');
+          }
+        });
+      }, 100);
+    });
+  </script>
+</body>
+</html>

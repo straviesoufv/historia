@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards Interactivas - Historia Romana</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Estilos específicos para las flashcards */
+    .flashcards-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    
+    .flashcards-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    
+    .filters-container {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      background-color: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 200px;
+      flex: 1;
+    }
+    
+    .filter-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .filter-group select {
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: white;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+    
+    .reset-filters {
+      align-self: flex-end;
+      padding: 0.75rem 1.5rem;
+      background-color: #f0f4f8;
+      color: var(--text-color);
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    
+    .reset-filters:hover {
+      background-color: #e9ecef;
+    }
+    
+    .reset-filters i {
+      font-size: 0.9em;
+    }
+    
+    .flashcards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .flashcard {
+      aspect-ratio: 2/1.5;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    
+    .flashcard:hover {
+      transform: translateY(-5px);
+    }
+    
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .flashcard-front,
+    .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .flashcard-front {
+      background: linear-gradient(135deg, #ffffff, #f8f9fa);
+      border: 1px solid #e9ecef;
+      justify-content: space-between;
+    }
+    
+    .flashcard-back {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      transform: rotateY(180deg);
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
+    
+    .flashcard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .flashcard-category {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      background-color: rgba(74, 144, 226, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+    
+    .flashcard-difficulty {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+    
+    .flashcard-difficulty.fácil {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+    
+    .flashcard-difficulty.media {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+    }
+    
+    .flashcard-difficulty.difícil {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+    
+    .flashcard-question {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 1rem 0;
+    }
+    
+    .flashcard-question p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .flashcard-hint {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    .flashcard-answer {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #495057;
+    }
+    
+    .flashcard-answer p {
+      margin: 0 0 1rem 0;
+    }
+    
+    .flashcard-answer p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .no-cards {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      margin: 2rem 0;
+    }
+    
+    .no-cards i {
+      font-size: 3rem;
+      color: #6c757d;
+      margin-bottom: 1rem;
+    }
+    
+    .no-cards p {
+      font-size: 1.1rem;
+      color: #495057;
+      margin-bottom: 1.5rem;
+    }
+    
+    .no-cards button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .no-cards button:hover {
+      background-color: #2c6db3;
+    }
+    
+    .stats-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+    
+    .stat {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+    
+    .stat-label {
+      font-weight: 500;
+      opacity: 0.9;
+    }
+    
+    @media (max-width: 768px) {
+      .filters-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .filter-group {
+        width: 100%;
+      }
+      
+      .reset-filters {
+        align-self: flex-start;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .flashcards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Estilos para la sección de instrucciones */
+    .instrucciones {
+      background-color: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .instrucciones h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 1.25rem;
+    }
+    
+    .instrucciones ol {
+      padding-left: 1.5rem;
+      margin-bottom: 0;
+    }
+    
+    .instrucciones li {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <main class="flashcards-container">
+    <h1 id="titulo-bloque">Flashcards Interactivas</h1>
+    
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="block-filter">Bloque temático</label>
+        <select id="block-filter">
+          <!-- Las opciones se cargarán dinámicamente -->
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="category-filter">Categoría</label>
+        <select id="category-filter">
+          <option value="todas">Todas las categorías</option>
+          <!-- Las opciones se cargarán dinámicamente -->
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="difficulty-filter">Dificultad</label>
+        <select id="difficulty-filter">
+          <option value="todas">Todas las dificultades</option>
+          <option value="fácil">Fácil</option>
+          <option value="media">Media</option>
+          <option value="difícil">Difícil</option>
+        </select>
+      </div>
+      
+      <button id="reset-filters" class="reset-filters">
+        <i class="fas fa-sync-alt"></i>
+        Reiniciar filtros
+      </button>
+    </div>
+    
+    <div class="stats-container">
+      <div id="flashcards-stats" class="stat">
+        <span class="stat-value">0</span>
+        <span class="stat-label">tarjetas</span>
+      </div>
+    </div>
+    
+    <div id="flashcards-container" class="flashcards-grid">
+      <!-- Las flashcards se generarán aquí dinámicamente -->
+      <div class="no-cards">
+        <i class="fas fa-search"></i>
+        <p>Selecciona un bloque para comenzar</p>
+      </div>
+    </div>
+    
+    <div class="instrucciones">
+      <h3>¿Cómo usar las flashcards?</h3>
+      <ol>
+        <li>Selecciona un bloque temático para ver las tarjetas disponibles.</li>
+        <li>Filtra por categoría o dificultad si lo deseas.</li>
+        <li>Haz clic en una tarjeta para ver la respuesta.</li>
+        <li>Vuelve a hacer clic para volver a la pregunta.</li>
+        <li>¡Practica hasta que domines todos los conceptos!</li>
+      </ol>
+    </div>
+    
+    <a href="actividades.html" class="button" style="display: inline-block; margin-top: 1rem;">Volver a actividades</a>
+  </main>
+  
+  <div id="footer-placeholder"></div>
+  
+  <!-- Scripts -->
+  <script src="js/flashcards-data.js"></script>
+  <script src="js/flashcards-enhanced.js"></script>
+  <script>
+    // Cargar header y footer
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('../footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === 'actividades.html') {
+            link.classList.add('active');
+          }
+        });
+      }, 100);
+    });
+  </script>
+</body>
+</html>

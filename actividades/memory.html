@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory: Historia Romana</title>
+  <link rel="stylesheet" href="../estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Estilos específicos para el juego de memoria */
+    .memory-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .memory-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .memory-stats {
+      display: flex;
+      gap: 1.5rem;
+      background-color: #f5f7fa;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+    
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    #memory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .memory-card {
+      aspect-ratio: 3/4;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    
+    .memory-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    
+    .memory-card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card-front {
+      background: linear-gradient(135deg, var(--primary-color), #3d8b40);
+      color: white;
+      font-weight: 500;
+      font-size: 3rem;
+    }
+    
+    .card-back {
+      background: white;
+      transform: rotateY(180deg);
+      border: 2px solid #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      overflow-y: auto;
+    }
+    
+    .card-back.termino {
+      border-left: 4px solid #4a90e2;
+      background-color: #e3f2fd;
+    }
+    
+    .card-back.definicion {
+      border-left: 4px solid #7cb342;
+      background-color: #f1f8e9;
+    }
+    
+    .memory-card.matched {
+      opacity: 0.7;
+      cursor: default;
+      transform: none !important;
+    }
+    
+    .memory-card.matched .card-back {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+    }
+    
+    select, button {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    select:focus, button:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+    }
+    
+    button:hover {
+      background-color: #357abd;
+    }
+    
+    @media (max-width: 768px) {
+      #memory-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.75rem;
+      }
+      
+      .memory-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .memory-stats {
+        width: 100%;
+        justify-content: space-around;
+      }
+      
+      .card-front {
+        font-size: 2.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      #memory-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .memory-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .stat {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+    
+    /* Estilos para la sección de instrucciones */
+    .instrucciones {
+      background-color: #f8f9fa;
+      border-left: 4px solid #6c757d;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .instrucciones h3 {
+      margin-top: 0;
+      color: #343a40;
+    }
+    
+    .instrucciones ol {
+      padding-left: 1.5rem;
+    }
+    
+    .instrucciones li {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <main class="memory-container">
+    <h1 id="titulo-bloque">Memory: Historia Romana</h1>
+    
+    <div class="memory-header">
+      <div class="memory-controls">
+        <select id="selector-bloques">
+          <!-- Las opciones se cargarán dinámicamente -->
+        </select>
+        <button id="reiniciar-btn">
+          <i class="fas fa-redo"></i> Reiniciar
+        </button>
+      </div>
+      
+      <div class="memory-stats">
+        <div class="stat">
+          <span class="stat-label">Intentos</span>
+          <span id="intentos" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Aciertos</span>
+          <span id="aciertos" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Total</span>
+          <span id="total-parejas" class="stat-value">0</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="memory-grid">
+      <!-- Las cartas se generarán dinámicamente aquí -->
+    </div>
+    
+    <div class="instrucciones">
+      <h3>¿Cómo jugar?</h3>
+      <ol>
+        <li>Haz clic en una carta para voltearla y ver su contenido.</li>
+        <li>Encuentra las parejas de términos y sus definiciones.</li>
+        <li>Si las cartas coinciden, permanecerán visibles.</li>
+        <li>Si no coinciden, se volverán a dar la vuelta.</li>
+        <li>¡Completa todas las parejas con el menor número de intentos posible!</li>
+      </ol>
+    </div>
+    
+    <a href="actividades.html" class="button" style="display: inline-block; margin-top: 1rem;">Volver a actividades</a>
+  </main>
+  
+  <div id="footer-placeholder"></div>
+  
+  <!-- Scripts -->
+  <script src="../js/memory-data.js"></script>
+  <script src="../js/memory-game.js"></script>
+  <script>
+    // Cargar header y footer
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('../footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === 'actividades.html') {
+            link.classList.add('active');
+          }
+        });
+      }, 100);
+    });
+  </script>
+</body>
+</html>

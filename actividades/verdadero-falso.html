@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verdadero o Falso - Historia de la Antigua Roma</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../estilos.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .bloque-selector {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .bloque-selector select {
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .pregunta-container {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .pregunta-tema {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pregunta-texto {
+      font-size: 18px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .opciones {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .opcion-btn {
+      padding: 10px 25px;
+      border: 2px solid #3498db;
+      background-color: white;
+      color: #3498db;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .opcion-btn:hover {
+      background-color: #f0f7ff;
+    }
+
+    .opcion-btn.seleccionada {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .opcion-btn.correcta {
+      background-color: #2ecc71;
+      border-color: #2ecc71;
+      color: white;
+    }
+
+    .opcion-btn.incorrecta {
+      background-color: #e74c3c;
+      border-color: #e74c3c;
+      color: white;
+    }
+
+    .feedback {
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .feedback.correcto {
+      background-color: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+
+    .feedback.incorrecto {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-siguiente {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .btn-siguiente:hover {
+      background-color: #27ae60;
+    }
+
+    .btn-reiniciar {
+      background-color: #95a5a6;
+      color: white;
+    }
+
+    .btn-reiniciar:hover {
+      background-color: #7f8c8d;
+    }
+
+    .puntos-container {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .puntos {
+      color: #2c3e50;
+      font-size: 24px;
+    }
+
+    .progreso {
+      width: 100%;
+      height: 10px;
+      background-color: #ecf0f1;
+      border-radius: 5px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+
+    .progreso-barra {
+      height: 100%;
+      width: 0%;
+      background-color: #3498db;
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .opciones {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .opcion-btn {
+        width: 100%;
+      }
+      
+      .acciones {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <div class="container">
+    <h1><i class="fas fa-check-double"></i> Verdadero o Falso</h1>
+    
+    <div class="bloque-selector">
+      <select id="tema" class="form-control">
+        <option value="todos">Todos los temas</option>
+        <option value="mitologia">Mitología Romana</option>
+        <option value="conquista">Conquista Romana</option>
+        <option value="organizacion">Organización de Hispania</option>
+        <option value="economia">Economía Romana</option>
+        <option value="terminos">Términos Latinos</option>
+      </select>
+    </div>
+    
+    <div class="puntos-container">
+      Puntos: <span class="puntos" id="puntos">0</span>
+    </div>
+    
+    <div class="progreso">
+      <div class="progreso-barra" id="progreso"></div>
+    </div>
+    
+    <div id="pregunta-container" class="pregunta-container">
+      <div class="pregunta-tema" id="pregunta-tema">Tema de la pregunta</div>
+      <div class="pregunta-texto" id="pregunta-texto">Cargando preguntas...</div>
+      
+      <div class="opciones">
+        <button class="opcion-btn" data-valor="true">Verdadero</button>
+        <button class="opcion-btn" data-valor="false">Falso</button>
+      </div>
+      
+      <div id="feedback" class="feedback"></div>
+    </div>
+    
+    <div class="acciones">
+      <button id="reiniciar-btn" class="btn btn-reiniciar">
+        <i class="fas fa-redo"></i> Reiniciar
+      </button>
+      <button id="siguiente-btn" class="btn btn-siguiente" disabled>
+        Siguiente <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div id="footer-placeholder"></div>
+
+  <script>
+    // Variables globales
+    let preguntas = [];
+    let preguntaActual = null;
+    let puntuacion = 0;
+    let preguntasRespondidas = 0;
+    let respuestaSeleccionada = null;
+
+    // Elementos del DOM
+    const preguntaTemaElement = document.getElementById('pregunta-tema');
+    const preguntaTextoElement = document.getElementById('pregunta-texto');
+    const opcionBtns = document.querySelectorAll('.opcion-btn');
+    const feedbackElement = document.getElementById('feedback');
+    const siguienteBtn = document.getElementById('siguiente-btn');
+    const reiniciarBtn = document.getElementById('reiniciar-btn');
+    const puntosElement = document.getElementById('puntos');
+    const progresoElement = document.getElementById('progreso');
+    const temaSelect = document.getElementById('tema');
+
+    // Preguntas basadas en el contenido de teoría_completa.md
+    const preguntasBase = [
+      // Mitología Romana
+      {
+        tema: 'MITOLOGÍA ROMANA',
+        pregunta: 'Saturno se comía a sus hijos para evitar ser destronado.',
+        respuesta: true,
+        explicacion: 'Saturno (Cronos) se comía a sus hijos para evitar ser destronado, según el mito.'
+      },
+      {
+        tema: 'MITOLOGÍA ROMANA',
+        pregunta: 'Proserpina pasaba todo el año en el inframundo con Plutón.',
+        respuesta: false,
+        explicacion: 'Proserpina pasaba seis meses en el inframundo con Plutón y seis meses en la Tierra con su madre Ceres.'
+      },
+      
+      // Conquista Romana
+      {
+        tema: 'CONQUISTA ROMANA',
+        pregunta: 'Los romanos derrotaron a los cartagineses en la segunda guerra púnica.',
+        respuesta: true,
+        explicacion: 'Los romanos derrotaron a los cartagineses en el 206 a.C., expulsándolos de la península.'
+      },
+      {
+        tema: 'CONQUISTA ROMANA',
+        pregunta: 'Los romanos llegaron a la península ibérica durante la primera guerra púnica.',
+        respuesta: false,
+        explicacion: 'Los romanos llegaron durante la segunda guerra púnica, en el 218 a.C., desembarcando en Empúries.'
+      },
+      
+      // Organización de Hispania
+      {
+        tema: 'ORGANIZACIÓN DE HISPANIA',
+        pregunta: 'Hispania estaba dividida en dos provincias: Citerior y Ulterior.',
+        respuesta: true,
+        explicacion: 'Inicialmente, Hispania se dividió en dos provincias: Citerior (este) y Ulterior (sur y oeste).'
+      },
+      
+      // Economía Romana
+      {
+        tema: 'ECONOMÍA ROMANA',
+        pregunta: 'El vino y el aceite de Hispania eran muy apreciados en Roma.',
+        respuesta: true,
+        explicacion: 'El vino y el aceite de Hispania eran productos muy valorados en el Imperio Romano.'
+      },
+      {
+        tema: 'ECONOMÍA ROMANA',
+        pregunta: 'La agricultura en Hispania no era importante para los romanos.',
+        respuesta: false,
+        explicacion: 'La agricultura era muy importante, destacando el cultivo de trigo, vid y olivo, conocidos como la trilogía mediterránea.'
+      },
+      
+      // Términos Latinos
+      {
+        tema: 'TÉRMINOS LATINOS',
+        pregunta: 'La palabra "superávit" significa "lo que falta".',
+        respuesta: false,
+        explicacion: 'Superávit significa "lo que sobra", mientras que "déficit" significa "lo que falta".'
+      },
+      {
+        tema: 'TÉRMINOS LATINOS',
+        pregunta: '\'Curriculum vitae\' significa \'carrera de la vida\'.',
+        respuesta: true,
+        explicacion: '\'Curriculum vitae\' significa literalmente \'carrera de la vida\' en latín.'
+      },
+      {
+        tema: 'MITOLOGÍA ROMANA',
+        pregunta: 'Júpiter era el dios de los mares en la mitología romana.',
+        respuesta: false,
+        explicacion: 'Júpiter era el dios del cielo y el trueno, mientras que Neptuno era el dios de los mares.'
+      }
+    ];
+
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar las preguntas
+      preguntas = [...preguntasBase];
+      
+      // Configurar eventos
+      configurarEventos();
+      
+      // Cargar la primera pregunta
+      cargarPreguntaAleatoria();
+    });
+
+    // Configurar eventos
+    function configurarEventos() {
+      // Eventos de los botones de opción
+      opcionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (preguntaActual.respuesta === null) return; // Ya se respondió
+          
+          // Deseleccionar otras opciones
+          opcionBtns.forEach(b => b.classList.remove('seleccionada'));
+          
+          // Seleccionar la opción actual
+          btn.classList.add('seleccionada');
+          respuestaSeleccionada = btn.dataset.valor === 'true';
+          
+          // Mostrar feedback
+          mostrarFeedback(respuestaSeleccionada === preguntaActual.respuesta);
+        });
+      });
+      
+      // Evento del botón siguiente
+      siguienteBtn.addEventListener('click', () => {
+        if (preguntaActual.respuesta === null) return; // No se ha respondido
+        
+        // Actualizar puntuación si la respuesta fue correcta
+        if (respuestaSeleccionada === preguntaActual.respuesta) {
+          puntuacion += 10;
+          actualizarPuntuacion();
+        }
+        
+        // Cargar siguiente pregunta
+        cargarPreguntaAleatoria();
+      });
+      
+      // Evento del botón reiniciar
+      reiniciarBtn.addEventListener('click', reiniciarJuego);
+      
+      // Evento del selector de tema
+      temaSelect.addEventListener('change', () => {
+        reiniciarJuego();
+      });
+    }
+    
+    // Cargar una pregunta aleatoria
+    function cargarPreguntaAleatoria() {
+      // Filtrar preguntas por tema seleccionado
+      let preguntasFiltradas = [];
+      const temaSeleccionado = temaSelect.value;
+      
+      if (temaSeleccionado === 'todos') {
+        preguntasFiltradas = [...preguntas];
+      } else {
+        // Mapear los valores de los temas a los temas en las preguntas
+        const temasMap = {
+          'mitologia': 'MITOLOGÍA ROMANA',
+          'conquista': 'CONQUISTA ROMANA',
+          'organizacion': 'ORGANIZACIÓN DE HISPANIA',
+          'economia': 'ECONOMÍA ROMANA',
+          'terminos': 'TÉRMINOS LATINOS'
+        };
+        
+        const temaBuscado = temasMap[temaSeleccionado] || '';
+        preguntasFiltradas = preguntas.filter(p => p.tema === temaBuscado);
+      }
+      
+      // Si no hay preguntas disponibles
+      if (preguntasFiltradas.length === 0) {
+        preguntaTemaElement.textContent = 'Sin preguntas disponibles';
+        preguntaTextoElement.textContent = 'No hay preguntas para el tema seleccionado.';
+        return;
+      }
+      
+      // Seleccionar una pregunta aleatoria
+      const indice = Math.floor(Math.random() * preguntasFiltradas.length);
+      preguntaActual = {...preguntasFiltradas[indice]};
+      
+      // Actualizar la interfaz
+      preguntaTemaElement.textContent = preguntaActual.tema;
+      preguntaTextoElement.textContent = preguntaActual.pregunta;
+      
+      // Reiniciar estilos
+      opcionBtns.forEach(btn => {
+        btn.classList.remove('seleccionada', 'correcta', 'incorrecta');
+      });
+      
+      feedbackElement.style.display = 'none';
+      siguienteBtn.disabled = true;
+    }
+    
+    // Mostrar feedback de la respuesta
+    function mostrarFeedback(esCorrecta) {
+      // Actualizar estilos de los botones
+      opcionBtns.forEach(btn => {
+        const esVerdadero = btn.dataset.valor === 'true';
+        if (esVerdadero === preguntaActual.respuesta) {
+          btn.classList.add('correcta');
+        } else if (btn.classList.contains('seleccionada')) {
+          btn.classList.add('incorrecta');
+        }
+      });
+      
+      // Mostrar feedback
+      feedbackElement.textContent = preguntaActual.explicacion;
+      feedbackElement.className = 'feedback ' + (esCorrecta ? 'correcto' : 'incorrecto');
+      feedbackElement.style.display = 'block';
+      
+      // Habilitar botón siguiente
+      siguienteBtn.disabled = false;
+      
+      // Actualizar progreso
+      preguntasRespondidas++;
+      actualizarProgreso();
+    }
+    
+    // Actualizar la puntuación
+    function actualizarPuntuacion() {
+      puntosElement.textContent = puntuacion;
+    }
+    
+    // Actualizar la barra de progreso
+    function actualizarProgreso() {
+      const porcentaje = (preguntasRespondidas / 10) * 100; // 10 preguntas por juego
+      progresoElement.style.width = `${porcentaje}%`;
+    }
+    
+    // Reiniciar el juego
+    function reiniciarJuego() {
+      puntuacion = 0;
+      preguntasRespondidas = 0;
+      actualizarPuntuacion();
+      actualizarProgreso();
+      cargarPreguntaAleatoria();
+    }
+  </script>
+  
+  <!-- Cargar header y footer -->
+  <script>
+    // Cargar header
+    fetch('../header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error al cargar el header:', error));
+    
+    // Cargar footer
+    fetch('../footer.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('footer-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error al cargar el footer:', error));
+  </script>
+</body>
+</html>

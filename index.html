@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inicio - Material educativo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Material educativo para la asignatura" />
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  
+  <main>
+    <!-- EDITAR: Título y bienvenida -->
+    <section class="hero">
+      <h1>Bienvenido a la Historia de Roma e Hispania</h1>
+      <p class="intro">Esta página contiene material educativo para ayudarte a estudiar y repasar los contenidos de la asignatura. Navega por los diferentes apartados para acceder a la teoría, mapas mentales y actividades interactivas.</p>
+    </section>
+    
+    <!-- Accesos directos a las secciones principales -->
+    <section class="section" id="accesos-directos">
+      <h2 class="section-title">Recursos disponibles</h2>
+      
+      <div class="cards-container">
+        <!-- Tarjeta de Teoría -->
+        <div class="card card-enlace">
+          <h3 class="card-title">Teoría completa</h3>
+          <p>Consulta todo el contenido teórico organizado por bloques temáticos.</p>
+          <a href="teoria.html" class="button">Ir a teoría</a>
+        </div>
+        
+        <!-- Tarjeta de Resumen -->
+        <div class="card card-enlace">
+          <h3 class="card-title">Resumen</h3>
+          <p>Todo el contenido organizado en un solo documento.</p>
+          <a href="resumen.html" class="button">Ver resumen</a>
+        </div>
+        
+        <!-- Tarjeta de Actividades -->
+        <div class="card card-enlace">
+          <h3 class="card-title">Actividades</h3>
+          <p>Practica con ejercicios interactivos, crucigramas, flashcards y más.</p>
+          <a href="actividades.html" class="button">Hacer actividades</a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- EDITAR: Información adicional -->
+    <section class="section" id="informacion">
+      <h2 class="section-title">Información importante</h2>
+      
+      <!-- OPCIONAL: Puedes editar o eliminar esta sección según tus necesidades -->
+      <div class="card">
+        <h3 class="card-title">Objetivos de aprendizaje</h3>
+        <p>Al finalizar el estudio de estos materiales, serás capaz de:</p>
+        <ul>
+          <li>Comprender los conceptos fundamentales de la asignatura</li>
+          <li>Relacionar los diferentes temas y establecer conexiones</li>
+          <li>Aplicar los conocimientos a situaciones prácticas</li>
+          <li>Evaluar tu progreso mediante actividades interactivas</li>
+        </ul>
+      </div>
+      
+      <!-- OPCIONAL: Puedes añadir más tarjetas de información -->
+      <div class="card">
+        <h3 class="card-title">Cómo usar esta web</h3>
+        <p>Para aprovechar al máximo este recurso, te recomendamos:</p>
+        <ol>
+          <li>Revisa primero la teoría completa para entender los conceptos</li>
+          <li>Utiliza los mapas mentales para visualizar las relaciones entre conceptos</li>
+          <li>Practica con las actividades interactivas para reforzar lo aprendido</li>
+          <li>Vuelve a revisar la teoría si encuentras dificultades</li>
+        </ol>
+      </div>
+    </section>
+    
+    <!-- OPCIONAL: Noticias o anuncios -->
+    <div class="recurso">
+      <div class="recurso-icono">📢</div>
+      <div class="recurso-contenido">
+        <h3 class="recurso-titulo">Anuncios</h3>
+        <p class="recurso-descripcion">No hay anuncios actualmente. Visita esta página regularmente para ver actualizaciones.</p>
+      </div>
+    </div>
+  </main>
+  
+  <div id="footer-placeholder"></div>
+  
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el header:', error));
+      
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data)
+      .catch(error => console.error('Error al cargar el footer:', error));
+
+    // Función para marcar el enlace activo en la navegación
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+          }
+        });
+      }, 100); // Pequeño retraso para asegurar que el header se ha cargado
+    });
+  </script>
+  
+  <style>
+    /* Estilos específicos para la página de inicio */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    
+    .intro {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem auto;
+    }
+    
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .card-enlace {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .card-enlace .button {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    
+    @media (max-width: 768px) {
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</body>
+</html>
