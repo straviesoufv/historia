@@ -464,26 +464,18 @@
       }
     }
     
-    // Obtener feedback de OpenRouter
+    // Función para obtener feedback de la API de OpenRouter
     async function obtenerFeedback(respuestaUsuario) {
       if (!preguntaActual) return;
       
-      // Verificar que la API key esté configurada
-      if (!OPENROUTER_API_KEY) {
-        // Intentar cargar la API key desde variables de entorno o archivo local
-        try {
-          const response = await fetch('../.env/openrouter.txt');
-          if (response.ok) {
-            OPENROUTER_API_KEY = await response.text();
-          } else {
-            throw new Error('No se pudo cargar la API key');
-          }
-        } catch (error) {
-          console.error('Error al cargar la API key:', error);
-          throw new Error('No se pudo cargar la API key de OpenRouter. Verifica que el archivo .env/openrouter.txt existe y contiene tu API key.');
-        }
+      // API key de OpenRouter (en producción, esto debería venir de una variable de entorno segura)
+      const apiKey = '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';
+      
+      if (!apiKey) {
+        console.error('No se encontró la API key de OpenRouter');
+        throw new Error('No se pudo cargar la API key de OpenRouter.');
       }
-
+      
       try {
         // Mostrar mensaje de carga
         feedbackContenido.innerHTML = '<div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Analizando tu respuesta...</div>';
