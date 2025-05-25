@@ -65,69 +65,32 @@ app.get('/pregunta-aleatoria', (req, res) => {
     });
 });
 
-// POST /obtener-feedback
-app.post('/obtener-feedback', async (req, res) => {
-    const { tema, pregunta, respuestaModelo, respuestaUsuario } = req.body;
-    
+// POST /corregir
+app.post('/corregir', async (req, res) => {
+    const { pregunta, respuestaModelo, respuestaUsuario } = req.body;
     if (!pregunta || !respuestaModelo || !respuestaUsuario) {
-        return res.status(400).json({ error: 'Faltan datos requeridos.' });
+        return res.status(400).json({ error: 'Faltan datos.' });
     }
-    
+    // Construir prompt para feedback constructivo
+    const prompt = `Eres un profesor de historia de 1º de ESO. Aquí tienes una pregunta de desarrollo: "${pregunta}".\n\nRespuesta modelo: ${respuestaModelo}\n\nRespuesta del alumno: ${respuestaUsuario}\n\nHaz una corrección constructiva: di si la respuesta es correcta o no, qué le falta, qué podría mejorar, y si está bien, felicita al alumno. Básate en la respuesta modelo para evaluar la respuesta del alumno, no busques en otras fuentes. Responde en español. No hace falta que digas el nombre del alumno`;
     try {
-        console.log('Solicitud de feedback recibida para la pregunta:', pregunta.substring(0, 50) + '...');
-        
-        // Construir el prompt para el feedback
-        const messages = [
-            {
-                role: 'system',
-                content: 'Eres un profesor de historia experto en la Antigua Roma. Evalúa la respuesta del estudiante comparándola con la respuesta modelo. Proporciona un feedback constructivo, señalando aciertos, errores importantes y sugerencias de mejora. Sé claro y conciso (máximo 150 palabras). Si la respuesta es muy corta o irrelevante, sugiere cómo mejorarla.'
-            },
-            {
-                role: 'user',
-                content: `Tema: ${tema || 'No especificado'}\n\nPregunta: ${pregunta}\n\nRespuesta modelo de referencia: ${respuestaModelo}\n\nRespuesta del estudiante: ${respuestaUsuario}`
-            }
-        ];
-        
-        console.log('Enviando solicitud a OpenRouter...');
         const respuesta = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                Authorization: `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://historia-1eso-3t.netlify.app',
-                'X-Title': 'Ejercicios de Historia Antigua'
             },
             body: JSON.stringify({
-                model: 'mistralai/mistral-7b-instruct',
-                messages: messages,
-                max_tokens: 400,
-                temperature: 0.7
-            })
+                model: 'meta-llama/llama-4-maverick',
+                messages: [{ role: 'user', content: prompt }],
+            }),
         });
-        
-        if (!respuesta.ok) {
-            const errorText = await respuesta.text();
-            console.error('Error en la respuesta de OpenRouter:', respuesta.status, errorText);
-            return res.status(respuesta.status).json({ 
-                error: `Error al contactar con OpenRouter: ${respuesta.statusText}` 
-            });
-        }
-        
         const data = await respuesta.json();
-        console.log('Respuesta de OpenRouter recibida');
-        
-        const feedback = data.choices?.[0]?.message?.content || 'No se pudo generar el feedback.';
-        
-        res.json({ 
-            success: true,
-            feedback: feedback
-        });
-        
+        const feedback = data.choices?.[0]?.message?.content || 'No se pudo obtener feedback.';
+        res.json({ feedback });
     } catch (error) {
-        console.error('Error en /obtener-feedback:', error);
-        res.status(500).json({ 
-            error: 'Error interno del servidor al procesar la solicitud.' 
-        });
+        console.error(error);
+        res.status(500).json({ error: 'Error al contactar con OpenRouter.' });
     }
 });
 
