@@ -1,6 +1,25 @@
 const fetch = require('node-fetch');
 
+// Cargar variables de entorno
+try {
+  require('dotenv').config();
+} catch (e) {
+  console.log('dotenv no está disponible en producción');
+}
+
 exports.handler = async (event, context) => {
+  // Configurar CORS
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Manejar solicitud OPTIONS (preflight)
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
   // Solo permitir solicitudes POST
   if (event.httpMethod !== 'POST') {
     return {
@@ -21,7 +40,9 @@ exports.handler = async (event, context) => {
 
     console.log('Solicitud de feedback recibida para la pregunta:', pregunta.substring(0, 50) + '...');
     
+    // Intentar obtener la API key de OpenRouter de las variables de entorno
     const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+    console.log('API Key de OpenRouter:', OPENROUTER_API_KEY ? '***' + OPENROUTER_API_KEY.slice(-4) : 'No encontrada');
     
     if (!OPENROUTER_API_KEY) {
       console.error('No se encontró la API key de OpenRouter');
@@ -77,6 +98,7 @@ exports.handler = async (event, context) => {
     
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ 
         success: true,
         feedback: feedback
@@ -87,7 +109,9 @@ exports.handler = async (event, context) => {
     console.error('Error en la función de Netlify:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ 
+        success: false,
         error: 'Error interno del servidor al procesar la solicitud.' 
       })
     };
