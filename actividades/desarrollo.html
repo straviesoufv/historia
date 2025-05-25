@@ -475,7 +475,8 @@
         
         console.log('Enviando solicitud al backend intermedio...');
         
-        const response = await fetch('/obtener-feedback', {
+        // Usamos la ruta completa al backend en Netlify Functions
+        const response = await fetch('/.netlify/functions/obtener-feedback', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
