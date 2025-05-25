@@ -40,17 +40,23 @@ exports.handler = async (event, context) => {
 
     console.log('Solicitud de feedback recibida para la pregunta:', pregunta.substring(0, 50) + '...');
     
-    // Usar directamente la API key de OpenRouter
-    const OPENROUTER_API_KEY = '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';
-    console.log('Usando API Key de OpenRouter directamente');
+    // Obtener la API key de OpenRouter desde las variables de entorno
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+    console.log('API Key de OpenRouter:', OPENROUTER_API_KEY ? '***' + OPENROUTER_API_KEY.slice(-4) : 'No encontrada');
     
-    // En un entorno de producción real, esto debería venir de variables de entorno
-    // const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+    if (!OPENROUTER_API_KEY) {
+      console.error('No se encontró la API key de OpenRouter en las variables de entorno');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Error de configuración del servidor' })
+      };
+    }
 
     const messages = [
       {
         role: 'system',
-        content: 'Eres un profesor de historia experto en la Antigua Roma. Evalúa la respuesta del estudiante comparándola con la respuesta modelo. Proporciona un feedback constructivo, señalando aciertos, errores importantes y sugerencias de mejora. Sé claro y conciso (máximo 150 palabras). Si la respuesta es muy corta o irrelevante, sugiere cómo mejorarla.'
+        content: 'Eres un profesor de 1º ESO de historia experto en la Antigua Roma. Evalúa la respuesta del estudiante comparándola con la respuesta modelo. Proporciona un feedback constructivo, señalando aciertos, errores importantes y sugerencias de mejora. Sé claro y conciso (máximo 150 palabras). Si la respuesta es muy corta o irrelevante, sugiere cómo mejorarla.'
       },
       {
         role: 'user',
@@ -68,7 +74,7 @@ exports.handler = async (event, context) => {
         'X-Title': 'Ejercicios de Historia Antigua'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-haiku',
+        model: 'meta-llama/llama-4-maverick',
         messages: messages,
         max_tokens: 400,
         temperature: 0.7
