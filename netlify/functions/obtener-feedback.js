@@ -40,17 +40,12 @@ exports.handler = async (event, context) => {
 
     console.log('Solicitud de feedback recibida para la pregunta:', pregunta.substring(0, 50) + '...');
     
-    // Intentar obtener la API key de OpenRouter de las variables de entorno
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-    console.log('API Key de OpenRouter:', OPENROUTER_API_KEY ? '***' + OPENROUTER_API_KEY.slice(-4) : 'No encontrada');
+    // Usar directamente la API key de OpenRouter
+    const OPENROUTER_API_KEY = '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';
+    console.log('Usando API Key de OpenRouter directamente');
     
-    if (!OPENROUTER_API_KEY) {
-      console.error('No se encontró la API key de OpenRouter');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Error de configuración del servidor' })
-      };
-    }
+    // En un entorno de producción real, esto debería venir de variables de entorno
+    // const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
     const messages = [
       {
@@ -73,7 +68,7 @@ exports.handler = async (event, context) => {
         'X-Title': 'Ejercicios de Historia Antigua'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct',
+        model: 'anthropic/claude-3-haiku',
         messages: messages,
         max_tokens: 400,
         temperature: 0.7
